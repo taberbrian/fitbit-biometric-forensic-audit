@@ -6,15 +6,25 @@ Project Overview
 
 This repository contains an end-to-end data science pipeline designed to extract "high-resolution" biometric data from Fitbit's export architecture. While standard fitness apps focus on steps and calories, this project performs a Forensic Audit of the raw sensor streams—specifically Continuous Electrodermal Activity (CEDA) and Heart Rate Variability (HRV)—to evaluate the neurological cost of exercise.
 
-Key Features
+Data Source & Acknowledgments
 
-Data Consolidation (Python/Pandas): A robust script to merge 130+ fragmented CSV/JSON files into a unified master database.
+Original Data: All raw biometric data was sourced from a Fitbit Personal Data Export (JSON/CSV dump). This project utilizes the "Body Response," "Heart Rate," and "Activity" telemetry streams.
 
-Forensic Auditing: Identifying sensor "dropouts" and mechanical noise artifacts during high-intensity lifting.
+Preprocessing: The initial data consolidation and cleaning were performed in Google Colab using Python. Special recognition is given to the Fitbit engineering community for documenting the schema of the body_response sensor logs.
 
-Interactive Visualizations (R/Plotly): Dynamic reports mapping sympathetic arousal (fight-or-flight) against cardiovascular strain.
+Methodology: The ETL Pipeline
 
-Recovery Tracking: Utilizing RMSSD (Root Mean Square of Successive Differences) to monitor parasympathetic recovery 24/7.
+The transformation of 130+ fragmented files into a single master database involved a three-stage process:
+
+Extraction (Python): Iterating through multi-nested directory structures to find sensor-specific CSV and JSON files.
+
+Transformation (Python/Pandas): * Standardizing disparate Unix and ISO timestamps to America/Chicago local time.
+
+Downsampling high-frequency sensor pings to minute-by-minute averages.
+
+Left-merging 10 distinct biometric streams onto a continuous timeline.
+
+Analysis (R/Tidyverse): Performing statistical audits and generating interactive Plotly visualizations in R Markdown.
 
 Interactive Reports
 
@@ -28,9 +38,7 @@ Tech Stack
 
 Languages: R (Tidyverse), Python (Pandas)
 
-Interactivity: Plotly, R Markdown
-
-Data Source: Fitbit Personal Data Export (Raw)
+Interactivity: Plotly, R Markdown, HTML/Tailwind (Dashboard)
 
 Environment: Google Colab (ETL), RStudio (Analysis)
 
