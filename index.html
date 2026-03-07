@@ -3,60 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fitbit Biometric Portfolio</title>
+    <title>Fitbit Biometric Portfolio | BT</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { background-color: #f8fafc; }
-        .card { transition: transform 0.2s; }
-        .card:hover { transform: translateY(-5px); }
+        .card { transition: all 0.3s ease; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); }
     </style>
 </head>
-<body class="font-sans text-slate-800">
+<body class="font-sans text-slate-800 antialiased">
 
-    <div class="max-w-4xl mx-auto px-6 py-12">
+    <div class="max-w-5xl mx-auto px-6 py-12 lg:py-24">
         <header class="text-center mb-16">
-            <h1 class="text-4xl font-extrabold text-slate-900 mb-4">Fitbit Biometric Forensic Audit</h1>
-            <p class="text-lg text-slate-600 max-w-2xl mx-auto">
-                An end-to-end data science project extracting, consolidating, and auditing high-resolution sensor data to evaluate physical strain and neurological recovery.
+            <h1 class="text-5xl font-extrabold text-slate-900 mb-6 tracking-tight">Advanced Biometric Forensic Audit</h1>
+            <p class="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
+                An end-to-end data science project extracting and auditing high-resolution sensor telemetry to evaluate physical strain and neurological recovery.
             </p>
+            
+            <div class="mt-8 p-4 bg-slate-100 rounded-lg inline-block text-sm text-slate-500 border border-slate-200 italic">
+                Data Recognition: The analysis below is derived from raw personal data exported from Fitbit. Pre-processing and consolidation of 130+ CSV/JSON source files were completed using a custom Python ETL pipeline in Google Colab.
+            </div>
         </header>
 
-        <div class="grid md:grid-cols-2 gap-8">
+        <div class="grid md:grid-cols-2 gap-10">
             <!-- Analysis Card -->
-            <div class="card bg-white p-8 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between">
+            <div class="card bg-white p-10 rounded-3xl shadow-sm border border-slate-100 flex flex-col justify-between">
                 <div>
-                    <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-lg flex items-center justify-center mb-6">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <div class="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center mb-8">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                         </svg>
                     </div>
-                    <h2 class="text-2xl font-bold mb-3 text-slate-900">Activity Analysis</h2>
-                    <p class="text-slate-600 mb-6">General overview of daily activity, step gaps, and cardiovascular efficiency across different workout types.</p>
+                    <h2 class="text-3xl font-bold mb-4 text-slate-900">Activity Analysis</h2>
+                    <p class="text-slate-600 text-lg mb-8 leading-relaxed">
+                        General overview of daily activity, step gaps, and cardiovascular efficiency across different workout modalities. Includes Monday performance deep-dives.
+                    </p>
                 </div>
-                <a href="fitbit_analysis.html" class="inline-block text-center bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-6 rounded-xl transition-colors">
-                    View Analysis
+                <!-- Updated to match your capitalized filename -->
+                <a href="Fitbit_Analysis.html" class="inline-block text-center bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 px-8 rounded-2xl transition-all shadow-lg shadow-emerald-200">
+                    View Activity Report
                 </a>
             </div>
 
             <!-- Details Card -->
-            <div class="card bg-white p-8 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between">
+            <div class="card bg-white p-10 rounded-3xl shadow-sm border border-slate-100 flex flex-col justify-between">
                 <div>
-                    <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-lg flex items-center justify-center mb-6">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <div class="w-14 h-14 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center mb-8">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                         </svg>
                     </div>
-                    <h2 class="text-2xl font-bold mb-3 text-slate-900">Technical Deep-Dive</h2>
-                    <p class="text-slate-600 mb-6">A forensic audit focusing on CEDA (sweat response) and HRV to measure nervous system stress and overtraining indicators.</p>
+                    <h2 class="text-3xl font-bold mb-4 text-slate-900">Technical Audit</h2>
+                    <p class="text-slate-600 text-lg mb-8 leading-relaxed">
+                        A forensic biometric deep-dive focusing on CEDA (sympathetic arousal) and HRV (RMSSD) to measure nervous system stress and overtraining.
+                    </p>
                 </div>
-                <a href="fitbit_details.html" class="inline-block text-center bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-xl transition-colors">
-                    View Technical Audit
+                <!-- Updated to match your capitalized filename -->
+                <a href="Fitbit_Details.html" class="inline-block text-center bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-8 rounded-2xl transition-all shadow-lg shadow-indigo-200">
+                    View Biometric Audit
                 </a>
             </div>
         </div>
 
-        <footer class="mt-20 pt-8 border-t border-slate-200 text-center text-slate-500 text-sm">
-            <p>Data processed with Python (Pandas) & R (Tidyverse). Visuals generated with Plotly.</p>
+        <footer class="mt-24 pt-10 border-t border-slate-200 text-center text-slate-400 text-sm">
+            <p class="mb-2">Data consolidated with Python & Pandas. Analysis performed in R with Tidyverse and Plotly.</p>
+            <p>&copy; 2026 Biometric Portfolio</p>
         </footer>
     </div>
 
