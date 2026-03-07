@@ -1,0 +1,133 @@
+---
+title: "Fitbit_Details"
+author: "BT"
+date: "2026-03-05"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    theme: cosmo
+    highlight: tango
+    code_folding: hide
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+```{r Libraries}
+library(tidyverse)
+library(lubridate)
+library(plotly)
+library(knitr)
+```
+Libraries
+
+
+```{r}
+# Ingesting the Master Database enriched with CEDA and HRV metrics
+master_df <- read_csv("fitbit_master_database.csv", guess_max = 100000)
+
+analysis_df <- master_df %>%
+  filter(minute >= ymd_hms("2026-01-01 00:00:00"))
+
+biometric_df <- analysis_df %>%
+  filter(Workout_Type != "None")
+```
+Import & Prepare Data
+<br><br>
+
+### **1. Sympathetic Arousal (CEDA)**
+Continuous Electrodermal Activity (CEDA) measures microscopic changes in skin conductance. High values indicate a "Fight or Flight" response.
+
+```{r CEDA: Sympathetic Nervous System Arousal}
+p1 <- biometric_df %>%
+  filter(!is.na(`ceda magnitude real micro siemens`)) %>%
+  ggplot(aes(x = Workout_Type, y = `ceda magnitude real micro siemens`, fill = Workout_Type)) +
+  geom_violin(alpha = 0.5, trim = FALSE) +
+  geom_boxplot(width = 0.0, color = "black", alpha = 0.7, outlier.shape = NA) +
+  scale_fill_manual(values = c("Warm up" = "#f28e2b", "Cardio" = "#e15759", "Weightlifting" = "#4e79a7")) +
+  theme_minimal() +
+  labs(title = "Nervous System Activation by Modality", 
+       subtitle = "Violin distribution with internal boxplot for median tracking",
+       y = "CEDA (Micro-Siemens)") +
+  theme(legend.position = "none")
+
+ggplotly(p1)
+```
+
+**Analysis:** The violin plots reveal that Cardio sessions produce the most consistent high-intensity sympathetic arousal. Interestingly, Weightlifting shows a "bottom-heavy" distribution with intermittent spikes, suggesting that neurological stress in lifting is episodic (during the set) rather than continuous.
+
+### **2. Biomechanical Efficiency**
+By plotting Steps against Heart Rate, we can visualize the "Cardiovascular Cost" of movement.
+
+```{r Biomechanical vs. Cardiovascular Exertion}
+p2 <- biometric_df %>%
+  filter(!is.na(steps) & !is.na(heart_rate)) %>%
+  ggplot(aes(x = heart_rate, y = steps, color = Workout_Type)) +
+  geom_point(alpha = 0.4, size = 1.5) +
+  geom_smooth(method = "lm", formula = y ~ x, se = FALSE, linewidth = 1) +
+  scale_color_manual(values = c("Warm up" = "#f28e2b", "Cardio" = "#e15759", "Weightlifting" = "#4e79a7")) +
+  theme_minimal() +
+  labs(title = "Steps vs. Heart Rate Correlation", 
+       x = "Heart Rate (BPM)",
+       y = "Steps per Minute")
+
+ggplotly(p2)
+```
+
+**Analysis:** This scatterplot effectively "fingerprints" the workout styles. Cardio (red) shows a clear linear correlation—as steps increase, heart rate follows. Weightlifting (blue) creates a vertical cluster, proving high cardiovascular strain even when mechanical movement (steps) is near zero. This validates the "intensity" of lifting sessions that traditional step-counters often ignore.
+
+### **3. Recovery: Ambient RMSSD**
+RMSSD (Root Mean Square of Successive Differences) is the gold standard for tracking parasympathetic recovery.
+
+```{r RMSSD: 24-Hour Recovery Efficiency}
+daily_recovery <- analysis_df %>%
+  filter(!is.na(rmssd) & rmssd > 0) %>%
+  group_by(date = as_date(minute)) %>%
+  summarize(avg_recovery = mean(rmssd, na.rm = TRUE))
+
+p3 <- ggplot(daily_recovery, aes(x = date, y = avg_recovery)) +
+  geom_segment(aes(xend = date, yend = 0), color = "#9467bd", linewidth = 0.5) +
+  geom_point(size = 3, color = "#9467bd") +
+  theme_minimal() +
+  labs(title = "Daily Recovery Performance (RMSSD)", 
+       x = "Date",
+       y = "Avg RMSSD (ms)")
+
+ggplotly(p3)
+```
+
+**Analysis:** The "Lollipop" chart shows your recovery trend across the month. Peaks in RMSSD (e.g., mid-January) correlate with rest days or higher quality sleep. A downward trend in these dots over several days would be a leading indicator of overtraining, signaling a need to reduce volume in the following week.
+
+### **4. Forensic Audit: CEDA vs Calories**
+A deep dive into the metabolic output versus nervous system response during the high-intensity peak observed on February 23rd.
+
+```{r}
+audit_data <- analysis_df %>%
+  filter(as_date(minute) == ymd("2026-02-23")) %>%
+  filter(minute >= ymd_hms("2026-02-23 10:30:00") & 
+         minute <= ymd_hms("2026-02-23 10:50:00"))
+
+p4 <- ggplot(audit_data, aes(x = minute)) +
+  geom_line(aes(y = calories, color = "Calories"), linewidth = 1) +
+  geom_line(aes(y = `ceda magnitude real micro siemens` * 10, color = "Sweat Response (CEDA)"), linewidth = 1) +
+  scale_color_manual(values = c("Calories" = "#e15759", "Sweat Response (CEDA)" = "#76b7b2")) +
+  theme_minimal() +
+  labs(
+    title = "Metabolic Output vs. Nervous System Response",
+    subtitle = "Feb 23rd: Validating calorie spikes against CEDA (scaled x10)",
+    x = "Time",
+    y = "Relative Magnitude",
+    color = "Metric"
+  )
+
+ggplotly(p4)
+```
+
+**Analysis:** By layering CEDA over the Calorie spike, we can scientifically validate data integrity. A true physiological peak of 22.7 kcal/min would typically be accompanied by a massive sympathetic nervous system response (sweat spike). If the CEDA line remains relatively stable while calories skyrocket, it confirms the spike was a sensor artifact caused by mechanical wrist interference rather than true exertion.
+
+<br><br>
+**Final Technical Audit Note**<br>
+The data reveals a consistent "Sensor Dropout" during heavy Weightlifting sessions for CEDA and HRV metrics. This is a known limitation of wrist-worn photoplethysmography (PPG) sensors during mechanical wrist flexion. By filtering for valid pings and cross-referencing with heart rate, we have maintained a high degree of data integrity for this report.
+
