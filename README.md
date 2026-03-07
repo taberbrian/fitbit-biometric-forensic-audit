@@ -1,8 +1,11 @@
-Advanced Biometric Forensic Audit 🛡️⌚
+# Advanced Biometric Forensic Audit 🛡️⌚
 
 Analyzing Autonomic Nervous System stress and recovery through Fitbit CEDA and HRV sensor data using R and Python.
 
-Project Overview
+## View the Live Project
+[Click here to view the interactive HTML dashboard](https://taberbrian.github.io/fitbit-biometric-forensic-audit/)
+
+## Project Overview
 
 This repository contains an end-to-end data science pipeline designed to extract "high-resolution" biometric data from Fitbit's export architecture. While standard fitness apps focus on steps and calories, this project performs a Forensic Audit of the raw sensor streams—specifically Continuous Electrodermal Activity (CEDA) and Heart Rate Variability (HRV)—to evaluate the neurological cost of exercise.
 
