@@ -2,6 +2,8 @@
 
 Analyzing Autonomic Nervous System stress and recovery through Fitbit CEDA and HRV sensor data using R and Python.
 
+**Data Recognition:** The analysis below is derived from raw personal data exported from Fitbit. Pre-processing and consolidation of 130+ CSV/JSON source files were completed using a custom Python ETL pipeline in Google Colab.
+
 ## View the Live Project
 [Click here to view the interactive HTML dashboard](https://taberbrian.github.io/fitbit-biometric-forensic-audit/)
 
