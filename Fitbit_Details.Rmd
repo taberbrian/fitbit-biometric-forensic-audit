@@ -37,26 +37,47 @@ biometric_df <- analysis_df %>%
 Import & Prepare Data
 <br><br>
 
-### **1. Sympathetic Arousal (CEDA)**
-Continuous Electrodermal Activity (CEDA) measures microscopic changes in skin conductance. High values indicate a "Fight or Flight" response.
+### **1. Peak Heart Rate Per Session**
+Peak HR per session reveals the maximum cardiovascular demand placed on the body during each workout. Sized by session duration, this chart shows effort ceiling across modalities over time.
 
-```{r CEDA: Sympathetic Nervous System Arousal}
-p1 <- biometric_df %>%
-  filter(!is.na(`ceda magnitude real micro siemens`)) %>%
-  ggplot(aes(x = Workout_Type, y = `ceda magnitude real micro siemens`, fill = Workout_Type)) +
-  geom_violin(alpha = 0.5, trim = FALSE) +
-  geom_boxplot(width = 0.0, color = "black", alpha = 0.7, outlier.shape = NA) +
-  scale_fill_manual(values = c("Warm up" = "#f28e2b", "Cardio" = "#e15759", "Weightlifting" = "#4e79a7")) +
+```{r Peak HR Per Session}
+peak_hr_df <- biometric_df %>%
+  filter(!is.na(heart_rate)) %>%
+  mutate(date = as_date(minute)) %>%
+  group_by(date, Workout_Type) %>%
+  summarise(
+    peak_hr       = max(heart_rate, na.rm = TRUE),
+    duration_mins = n(),
+    .groups       = "drop"
+  )
+
+p1 <- ggplot(peak_hr_df, aes(x = date, y = peak_hr,
+                              color = Workout_Type,
+                              size  = duration_mins)) +
+  geom_point(alpha = 0.8) +
+  scale_color_manual(values = c(
+    "Warm up"       = "#f28e2b",
+    "Cardio"        = "#e15759",
+    "Weightlifting" = "#4e79a7"
+  )) +
+  scale_size_continuous(range = c(3, 9), guide = "none") +
   theme_minimal() +
-  labs(title = "Nervous System Activation by Modality", 
-       subtitle = "Violin distribution with internal boxplot for median tracking",
-       y = "CEDA (Micro-Siemens)") +
-  theme(legend.position = "none")
+  labs(
+    title    = "Peak Heart Rate Per Session",
+    subtitle = "Dot size = session duration  |  color = workout modality",
+    x        = "Date",
+    y        = "Peak HR (BPM)",
+    color    = NULL
+  ) +
+  theme(
+    legend.position  = "bottom",
+    panel.grid.minor = element_blank()
+  )
 
-ggplotly(p1)
+ggplotly(p1, tooltip = c("x", "y", "color", "size"))
 ```
 
-**Analysis:** The violin plots reveal that Cardio sessions produce the most consistent high-intensity sympathetic arousal. Interestingly, Weightlifting shows a "bottom-heavy" distribution with intermittent spikes, suggesting that neurological stress in lifting is episodic (during the set) rather than continuous.
+**Analysis:** Each dot represents one session's peak cardiovascular demand. Cardio sessions (red) consistently reach higher peak HR than Weightlifting (blue), which clusters in a mid-range band. The February 23rd Weightlifting session stands out immediately as a dot sitting well above the typical Weightlifting band — the same outlier investigated in the forensic audit below. Dot size reveals that longer sessions don't always produce higher peak HR, suggesting intensity and duration are independent variables in this training block.
 
 ### **2. Biomechanical Efficiency**
 By plotting Steps against Heart Rate, we can visualize the "Cardiovascular Cost" of movement.
@@ -88,10 +109,20 @@ daily_recovery <- analysis_df %>%
   summarize(avg_recovery = mean(rmssd, na.rm = TRUE))
 
 p3 <- ggplot(daily_recovery, aes(x = date, y = avg_recovery)) +
+  geom_rect(
+    aes(xmin = as_date("2026-01-23"), xmax = as_date("2026-03-23"),
+        ymin = -Inf, ymax = Inf),
+    fill = "grey80", alpha = 0.3, inherit.aes = FALSE
+  ) +
+  annotate("text",
+           x     = as_date("2026-02-22"),
+           y     = max(daily_recovery$avg_recovery) * 0.92,
+           label = "No data\n(export gap)",
+           size  = 3, color = "grey50") +
   geom_segment(aes(xend = date, yend = 0), color = "#9467bd", linewidth = 0.5) +
   geom_point(size = 3, color = "#9467bd") +
   theme_minimal() +
-  labs(title = "Daily Recovery Performance (RMSSD)", 
+  labs(title = "Daily Recovery Performance (RMSSD)",
        x = "Date",
        y = "Avg RMSSD (ms)")
 
@@ -100,8 +131,8 @@ ggplotly(p3)
 
 **Analysis:** The "Lollipop" chart shows your recovery trend across the month. Peaks in RMSSD (e.g., mid-January) correlate with rest days or higher quality sleep. A downward trend in these dots over several days would be a leading indicator of overtraining, signaling a need to reduce volume in the following week.
 
-### **4. Forensic Audit: CEDA vs Calories**
-A deep dive into the metabolic output versus nervous system response during the high-intensity peak observed on February 23rd.
+### **4. Forensic Audit: Metabolic Output vs Sweat Response**
+A deep dive into the Feb 23rd caloric spike identified in the Peak HR chart above. Despite CEDA sensor limitations during heavy lifting, the Feb 23rd window produced sufficient signal to validate the caloric anomaly.
 
 ```{r}
 audit_data <- analysis_df %>%

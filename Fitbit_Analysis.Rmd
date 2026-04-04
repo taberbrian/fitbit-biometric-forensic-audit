@@ -59,7 +59,8 @@ p1 <- ggplot(step_comparison, aes(x = date, y = steps, color = Type, group = Typ
   geom_text(
     data = filter(step_comparison, Type == "Total Daily Steps" & steps > 10000),
     aes(label = paste0(format(date, "%b %d"), "\n", format(steps, big.mark = ","))),
-    nudge_x = 2.6,
+    nudge_x = 4.5,
+    nudge_y = 600.0,
     fontface = "bold",
     size = 3,
     show.legend = FALSE
@@ -205,6 +206,6 @@ ggplotly(p4)
 **Analysis:** By faceting Calories against Heart Rate, we can spot the **Feb 23rd** outlier immediately. While Heart Rate stayed within the typical Monday range, the Caloric expenditure spiked significantly, suggesting either a massive increase in lifting volume or a period of sensor instability discussed in the technical audit.
 
 <br><br>
-### Final Analysis: Variance of Feb 23rd Performance
+**Final Analysis: Variance of Feb 23rd Performance**
 
 The session on **Feb 23rd** exhibited a 60% increase in total caloric expenditure compared to the February Monday average. \* **Temporal Analysis:** A significant outlier (22.7 kcal/min) was identified. By calculating the delta between the Weightlifting start time (10:22 AM) and the peak (10:38 AM), we confirmed the anomaly occurred exactly **16 minutes** into the lifting block. \* **Root Cause:** While the specific lift is unrecorded, the 16-minute mark correlates with a self-reported period of high physical exertion following a 6-day recovery window. \* **Conclusion:** The increased session volume and intensity were genuine results of extended recovery, though the specific magnitude of the peak was likely amplified by sensor instability during heavy mechanical exertion.
